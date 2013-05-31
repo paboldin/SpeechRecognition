@@ -35,7 +35,8 @@ public class Frame {
     /**
      * Array of spectral data.
      */
-    private double[] data;
+    protected double[] data;
+    protected double power;
 
     /**
      * Maps frame size to the DCT instance that handles that size.
@@ -44,6 +45,7 @@ public class Frame {
     
     private final WindowFunction windowFunc;
     
+   
     public Frame(double[] timeData, WindowFunction windowFunc) {
         this.windowFunc = windowFunc;
         int frameSize = timeData.length;
@@ -58,9 +60,11 @@ public class Frame {
         double min = Double.POSITIVE_INFINITY;
         double max = Double.NEGATIVE_INFINITY;
         
+        power = 0.0;
         data = new double[frameSize];
         for (int i = 0; i < data.length; i++) {
             data[i] = timeData[i];
+            power += data[i] * data[i];
             min = Math.min(data[i], min);
             max = Math.max(data[i], max);
         }
@@ -128,7 +132,7 @@ public class Frame {
         windowFunc.applyWindow(timeData);
         return timeData;
     }
-    
+  
     /**
      * Quick demo to show original, transformed, and inverse transformed data.
      */

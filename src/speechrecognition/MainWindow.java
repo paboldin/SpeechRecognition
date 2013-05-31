@@ -8,6 +8,7 @@ package speechrecognition;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import java.io.File;
+import java.util.Arrays;
 
 import speechrecognition.spectro.*;
 
@@ -86,12 +87,30 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-        try {
-            Clip clip = Clip.newInstance(new File("/home/davinchi/file.wav"));
-        }
-        catch (Exception e) {
-            System.out.println(e);
-        }
+        //new Thread() {
+        //}
+        //}
+        SwingWorker worker = new SwingWorker<Void, Void>() {
+            @Override
+            public Void doInBackground() {
+                try {
+                    SoundBase sb = new SoundBase("/home/davinchi/alexey/base/base/");
+                    //System.out.println(sb.getClips());
+                    System.out.println(Arrays.toString(sb.getStrongestFreqs(100)));
+                    sb.writeNeurophCSV("/home/davinchi/alexey/base/file.csv", 200);
+                    //Clip clip = Clip.newInstance(new File("/home/davinchi/test.wav"));
+                    //Frame totalFrame = clip.getTotalFrame();
+                    //ClipSpectrum cs = new ClipSpectrum(clip);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                
+                return null;
+            }
+        };
+        
+        worker.execute();
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
