@@ -19,26 +19,21 @@ package speechrecognition.spectro;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
-public class VorbisWindowFunction implements WindowFunction {
+public class HammingWindowFunction implements WindowFunction {
 
-    private static final Logger logger = Logger.getLogger(VorbisWindowFunction.class.getName());
+    private static final Logger logger = Logger.getLogger(HammingWindowFunction.class.getName());
     
     private final double[] scalars;
     
     private static final double PI = Math.PI;
     
-    public VorbisWindowFunction(int size) {
+    public HammingWindowFunction(int size) {
         scalars = new double[size];
         for (int i = 0; i < size; i++) {
 
-            // This is the real vorbis one, but it's designed for MDCT where
-            // the output array is half the size of the input array
-            // double xx = Math.sin( (PI/(2.0*size)) * (i + 0.5) );
-            
-            double xx = Math.sin( (PI/(2.0*size)) * (2.0 * i) );
-            scalars[i] = Math.sin( (PI/2.0) * (xx * xx) );
+            scalars[i] = 0.54 - 0.46 * Math.cos(2. * PI * i / (size - 1));
         }
-        logger.finest(String.format("VorbisWindowFunction scalars (size=%d): %s\n", scalars.length, Arrays.toString(scalars)));
+        logger.finest(String.format("HammingWindowFunction scalars (size=%d): %s\n", scalars.length, Arrays.toString(scalars)));
     }
     
     @Override

@@ -45,8 +45,7 @@ public class Frame {
     
     private final WindowFunction windowFunc;
     
-   
-    public Frame(double[] timeData, WindowFunction windowFunc) {
+    public Frame(double[] timeData, WindowFunction windowFunc, int n) {
         this.windowFunc = windowFunc;
         int frameSize = timeData.length;
         DoubleDCT_1D dct = getDctInstance(frameSize);
@@ -69,9 +68,15 @@ public class Frame {
             max = Math.max(data[i], max);
         }
         
+        power = Math.sqrt(power) / n;
+        
         if (logger.isLoggable(Level.FINER)) {
             logger.finer(String.format("Computed frame. min=%4.6f max=%4.6f", min, max));
         }
+    }
+
+    public Frame(double[] timeData, WindowFunction windowFunc) {
+        this(timeData, windowFunc, timeData.length);
     }
 
     private static DoubleDCT_1D getDctInstance(int frameSize) {
