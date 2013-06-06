@@ -16,7 +16,7 @@ import java.io.IOException;
  * @author davinchi
  */
 public class ClipSpectrumFeature implements ClipFeature {
-    private static final Logger logger = Logger.getLogger(Frame.class.getName());
+    private static final Logger logger = Logger.getLogger(FrameSpectrum.class.getName());
 
     
     
@@ -87,12 +87,12 @@ public class ClipSpectrumFeature implements ClipFeature {
         try {
         
             for (int i = 0; i < clip.getFrameCount(); ++i) {
-                Frame frame = clip.getFrame(i);
+                FrameSpectrum frame = clip.getFrame(i);
                 maxPower = Math.max(frame.power, maxPower);
             }
 
             for (int i = 0; i < clip.getFrameCount(); ++i) {
-                Frame frame = clip.getFrame(i);
+                FrameSpectrum frame = clip.getFrame(i);
 
                 assert (frame.data.length == data.length);
 

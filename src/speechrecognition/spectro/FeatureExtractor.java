@@ -10,8 +10,10 @@ package speechrecognition.spectro;
  * @author davinchi
  */
 public interface FeatureExtractor {
-    public void featureFromClip(Clip clip);
-    public double[] extractFeatureVector(Clip clip);
-    public void before();
-    public void after();
+    public abstract void featureFromClip(Clip clip);
+    public abstract double[] extractFeatureVector(Clip clip);
+    public abstract void before();
+    public abstract void after();
+    
+    public abstract boolean alreadyExtracted();
 }

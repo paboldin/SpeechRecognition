@@ -16,6 +16,7 @@ import java.util.ArrayList;
 //import java.util.Arrays;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.SwingWorker;
 
 import speechrecognition.spectro.Clip;
 //import speechrecognition.spectro.ClipFeature;
@@ -27,13 +28,13 @@ import speechrecognition.spectro.FeatureExtractor;
  *
  * @author davinchi
  */
-public class SoundBase<T extends FeatureExtractor> {
+public class SoundBase {
 
-    private final T featureExtractor;
     private final File rootDir;
 //    private ClipFeature sumSpectrum;
     private final Map<String, Map<Integer, List<Clip>>> clips;
-//    private double[] freqs;
+    int totalClipsNumber = 0;
+    //    private double[] freqs;
 
     public enum WriterType {
 
@@ -62,6 +63,7 @@ public class SoundBase<T extends FeatureExtractor> {
                 //               }
 
                 result.add(clip);
+                totalClipsNumber += 1;
             } catch (UnsupportedAudioFileException e) {
                 System.out.println(e);
             } catch (IOException e) {
@@ -105,10 +107,9 @@ public class SoundBase<T extends FeatureExtractor> {
         }
     }
 
-    public SoundBase(String dirname, T featureExtractor) {
+    public SoundBase(String dirname) {
         rootDir = new File(dirname);
         clips = new HashMap<String, Map<Integer, List<Clip>>>();
-        this.featureExtractor = featureExtractor;
         //sumSpectrum = null;
 
         // TODO probably make lazy initialization
@@ -117,6 +118,10 @@ public class SoundBase<T extends FeatureExtractor> {
 
     public final Map<String, Map<Integer, List<Clip>>> getClips() {
         return clips;
+    }
+    
+    public int getClipsCount() {
+        return totalClipsNumber;
     }
 
     private <T extends SoundBaseVisitor> void visitClips(T visitor) {
@@ -132,10 +137,19 @@ public class SoundBase<T extends FeatureExtractor> {
             }
         }
     }
-
-    public void extractFeatures() {
-
+    
+    public void extractFeatures(final FeatureExtractor fe) {
+        extractFeatures(fe, null);
+    }
+    
+    public void extractFeatures(final FeatureExtractor fe, final SwingWorker sw) {
+        
+        if (fe.alreadyExtracted())
+            return;
+        
         SoundBaseVisitor visitor = new SoundBaseVisitor() {
+            int clipsVisited = 0;
+            
             @Override
             public void visitDictor(String name) {
             }
@@ -146,21 +160,24 @@ public class SoundBase<T extends FeatureExtractor> {
 
             @Override
             public void visitClip(Clip clip) {
-                featureExtractor.featureFromClip(clip);
+                clipsVisited++;
+                fe.featureFromClip(clip);
+                if (sw != null)
+                    sw.firePropertyChange("progress", 0, 100 * clipsVisited / totalClipsNumber);
             }
         };
 
-        featureExtractor.before();
+        fe.before();
         visitClips(visitor);
-        featureExtractor.after();
+        fe.after();
     }
 
-    public void writeNeurophCSV(String filename) {
-        writeNeurophCSV(new File(filename), WriterType.PERDICTOR_PERNUMBER);
+    public void writeNeurophCSV(String filename, FeatureExtractor fe) {
+        writeNeurophCSV(new File(filename), fe, WriterType.PERDICTOR_PERNUMBER);
     }
 
-    private void writeNeurophCSV(File out, WriterType v) {
-        extractFeatures();
+    public void writeNeurophCSV(File out, FeatureExtractor fe, WriterType v) {
+        extractFeatures(fe);
 
         try {
             out.createNewFile();
@@ -170,17 +187,17 @@ public class SoundBase<T extends FeatureExtractor> {
 
             switch (v) {
                 case PERDICTOR_PERNUMBER:
-                    writer = new NeurophCSVWriterPerDictorPerNumber(featureExtractor, bw,
+                    writer = new NeurophCSVWriterPerDictorPerNumber(fe, bw,
                             clips.size(), 10);
                     break;
 
                 case PERDICTOR:
-                    writer = new NeurophCSVWriterPerDictor(featureExtractor, bw,
+                    writer = new NeurophCSVWriterPerDictor(fe, bw,
                             clips.size(), 10);
                     break;
 
                 case PERNUMBER:
-                    writer = new NeurophCSVWriterPerNumber(featureExtractor, bw,
+                    writer = new NeurophCSVWriterPerNumber(fe, bw,
                             clips.size(), 10);
                     break;
             }

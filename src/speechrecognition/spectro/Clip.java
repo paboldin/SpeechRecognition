@@ -54,15 +54,13 @@ public class Clip {
     private static final int DEFAULT_FRAME_SIZE = 2048;
     private static final int DEFAULT_OVERLAP = 8;
     
-    private final List<Frame> frames = new ArrayList<Frame>();
+    private final List<FrameSpectrum> frames = new ArrayList<FrameSpectrum>();
     
     /**
      * Number of samples per frame. Currently must be a power of 2 (this is a requirement
      * of many DFT routines).
      */
     private final int frameSize;
-    
-    private final InputStream in;
     
     /**
      * The amount of overlap: this is the number of frames that will carry information
@@ -99,9 +97,7 @@ public class Clip {
      *             as nonexistence.
      */
     public static Clip newInstance(File file) throws UnsupportedAudioFileException, IOException {
-        AudioFormat desiredFormat = AUDIO_FORMAT;
-        BufferedInputStream in = new BufferedInputStream(AudioFileUtils.readAsMono(desiredFormat, file));
-        return new Clip(file.getAbsolutePath(), in, DEFAULT_FRAME_SIZE, DEFAULT_OVERLAP);
+        return new Clip(file.getAbsolutePath(), DEFAULT_FRAME_SIZE, DEFAULT_OVERLAP);
     }
     
     /**
@@ -118,16 +114,26 @@ public class Clip {
      * </ul>
      * @throws IOException If reading the input stream fails for any reason. 
      */
-    private Clip(String name, InputStream in, int frameSize, int overlap) throws IOException {
+    private Clip(String name, int frameSize, int overlap) throws IOException {
         this.name = name;
         this.frameSize = frameSize;
         this.overlap = overlap;
-        this.in = in;
     }
     
     public void readFrames() throws IOException {
         if (frames.size() > 0)
                 return;
+ 
+        BufferedInputStream in;
+        
+        AudioFormat desiredFormat = AUDIO_FORMAT;
+        try {
+            in = new BufferedInputStream(
+                    AudioFileUtils.readAsMono(desiredFormat, new File(name))
+            );
+        } catch( UnsupportedAudioFileException e ) {
+            throw new IOException(e);
+        }
         
         WindowFunction windowFunc = new HammingWindowFunction(frameSize);
         byte[] buf = new byte[frameSize * 2]; // 16-bit mono samples
@@ -152,7 +158,7 @@ public class Clip {
                 samples[i] = (sampVal / spectralScale);
             }
             
-            frames.add(new Frame(samples, windowFunc, n));
+            frames.add(new FrameSpectrum(samples, windowFunc, n));
             in.reset();
             long bytesToSkip = (frameSize * 2) / overlap;
             long bytesSkipped;
@@ -228,7 +234,7 @@ public class Clip {
      * @return The <i>i</i>th frame. The returned frame is mutable; modifying
      * its data permanently alters the acoustic qualities of this clip.
      */
-    public Frame getFrame(int i) throws IOException { // FIXME this is wrong
+    public FrameSpectrum getFrame(int i) throws IOException { // FIXME this is wrong
         readFrames();
         
         return frames.get(i);
