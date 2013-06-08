@@ -108,6 +108,7 @@ public abstract class ClipPerFrameFeatures implements ClipFeatures {
                 framesSpectrum[i] = clip.getFrame(startI + (int) Math.round(step * i));
             }
         } catch (IOException e) {
+            System.err.println(e);
         } finally {
             clip.unloadFrames();
         }

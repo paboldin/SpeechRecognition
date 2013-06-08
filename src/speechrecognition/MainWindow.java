@@ -17,12 +17,15 @@ import javax.swing.*;
 //import javax.swing.filechooser.;
 //import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Set;
+import speechrecognition.audio.Clip;
 //import java.util.Arrays;
 
 import speechrecognition.soundbase.SoundBase;
+import speechrecognition.soundbase.SoundBaseVisitor;
 
 //import speechrecognition.spectro.*;
-
 /**
  *
  * @author davinchi
@@ -85,7 +88,7 @@ public class MainWindow extends javax.swing.JFrame {
         jFrequenciesRangeButton = new javax.swing.JRadioButton();
         jFrequenciesRanges = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        jSerializeSBButton = new javax.swing.JButton();
         jAnalyzeButton = new javax.swing.JButton();
         jProgressBar = new javax.swing.JProgressBar();
 
@@ -357,10 +360,10 @@ public class MainWindow extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Per-frame MFCC", jPanel2);
 
-        jButton1.setText("Serialize features extractor");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        jSerializeSBButton.setText("Serialize Sound base");
+        jSerializeSBButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                jSerializeSBButtonActionPerformed(evt);
             }
         });
 
@@ -381,7 +384,7 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addComponent(jAnalyzeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jSerializeSBButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(jProgressBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel8Layout.setVerticalGroup(
@@ -390,7 +393,7 @@ public class MainWindow extends javax.swing.JFrame {
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
+                    .addComponent(jSerializeSBButton)
                     .addComponent(jAnalyzeButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jProgressBar, javax.swing.GroupLayout.DEFAULT_SIZE, 66, Short.MAX_VALUE)
@@ -554,16 +557,18 @@ public class MainWindow extends javax.swing.JFrame {
         this.perFrameFFTOption = evt.getActionCommand();
     }//GEN-LAST:event_jSelectPerFrameFFTOption
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jSerializeSBButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSerializeSBButtonActionPerformed
         // TODO add your handling code here:
-        this.serializeFeaturesExtractor();
-    }//GEN-LAST:event_jButton1ActionPerformed
+        this.serializeSoundBase();
+    }//GEN-LAST:event_jSerializeSBButtonActionPerformed
 
-    private void serializeFeaturesExtractor() {
+    private void serializeSoundBase() {
         // TODO add your handling code here:
-        if (fe == null || !fe.canSerialize())
+        if (fe == null || !fe.canSerialize()) {
             return;
-        
+        }
+
+
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int returnVal = fc.showSaveDialog(MainWindow.this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -572,6 +577,21 @@ public class MainWindow extends javax.swing.JFrame {
                 protected Void doInBackground() {
                     try {
                         final FileOutputStream fos = new FileOutputStream(fc.getSelectedFile());
+                        final PrintWriter pw = new PrintWriter(fos);
+                        
+                        pw.println("SpeechRecognition, v0.0.1");
+
+                        Set<String> dictors = sb.getClips().keySet();
+                        pw.println(dictors.size());
+                        
+                        for(String dictor: dictors)
+                            pw.println(dictor);
+                        
+                        pw.println("Features Extractor");
+
+                        pw.println(fe.getClass().getSimpleName());
+                        pw.flush();
+
                         fe.serializeParameters(fos);
                     } catch (IOException e) {
                     }
@@ -580,9 +600,9 @@ public class MainWindow extends javax.swing.JFrame {
             };
 
             sw.execute();
-        }        
+        }
     }
-    
+
     /**
      * @param args the command line arguments
      */
@@ -627,7 +647,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.JButton jAnalyzeButton;
-    private javax.swing.JButton jButton1;
     private javax.swing.JButton jEncogButton;
     private javax.swing.JSpinner jFFTFrequencies;
     private javax.swing.JRadioButton jFrequenciesRangeButton;
@@ -655,6 +674,7 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JRadioButton jRadioButton2;
     private javax.swing.JRadioButton jRadioButton3;
     private javax.swing.JButton jSelectDirectory;
+    private javax.swing.JButton jSerializeSBButton;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JButton jTotalButton;

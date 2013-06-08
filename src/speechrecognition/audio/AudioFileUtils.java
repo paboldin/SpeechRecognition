@@ -46,6 +46,12 @@ public class AudioFileUtils {
      * @throws IllegalArgumentException if the 
      */
     public static AudioInputStream readAsMono(final AudioFormat desiredFormat, File file) throws UnsupportedAudioFileException, IOException {
+        return convertToMono(desiredFormat, AudioSystem.getAudioInputStream(file), AudioSystem.getAudioFileFormat(file).getFormat());
+    }
+
+    
+    public static AudioInputStream convertToMono(final AudioFormat desiredFormat, AudioInputStream in,
+                                                 final AudioFormat inputFormat) throws UnsupportedAudioFileException, IOException {
         if (desiredFormat.getSampleSizeInBits() != 16) {
             throw new UnsupportedOperationException(
                     "Only 16-bit samples are supported at the moment " +
@@ -55,10 +61,9 @@ public class AudioFileUtils {
             throw new UnsupportedOperationException("Desired number of channels should be 1 " +
             		"(you requested " + desiredFormat.getChannels() + ")");
         }
-        AudioFileFormat fileFormat = AudioSystem.getAudioFileFormat(file);
-        if (fileFormat.getFormat().getChannels() == 1) {
-            return AudioSystem.getAudioInputStream(desiredFormat, AudioSystem.getAudioInputStream(file));
-        } else if (fileFormat.getFormat().getChannels() == 2) {
+        if (inputFormat.getChannels() == 1) {
+            return AudioSystem.getAudioInputStream(desiredFormat, in);
+        } else if (inputFormat.getChannels() == 2) {
             AudioFormat stereoDesiredFormat = new AudioFormat(
                     desiredFormat.getEncoding(),
                     desiredFormat.getSampleRate(),
@@ -69,7 +74,7 @@ public class AudioFileUtils {
                     desiredFormat.isBigEndian(),
                     desiredFormat.properties());
             final AudioInputStream stereoIn = AudioSystem.getAudioInputStream(
-                    stereoDesiredFormat, AudioSystem.getAudioInputStream(file));
+                    stereoDesiredFormat, in);
             InputStream mixed = new InputStream() {
 
                 byte[] monobuf = new byte[16384];
@@ -128,7 +133,7 @@ public class AudioFileUtils {
             return new AudioInputStream(mixed, desiredFormat, stereoIn.getFrameLength());
         } else {
             throw new UnsupportedAudioFileException(
-                    "Unsupported number of channels: " + fileFormat.getFormat().getChannels());
+                    "Unsupported number of channels: " + inputFormat.getChannels());
         }
     }
 }

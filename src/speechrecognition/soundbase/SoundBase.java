@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.TreeMap;
 //import java.util.Arrays;
 
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -37,7 +38,6 @@ public class SoundBase {
     //    private double[] freqs;
 
     public enum WriterType {
-
         PERDICTOR_PERNUMBER,
         PERNUMBER,
         PERDICTOR,
@@ -76,7 +76,7 @@ public class SoundBase {
     }
 
     private Map<Integer, List<Clip>> parseDictor(File dictorDir) {
-        HashMap<Integer, List<Clip>> result = new HashMap<Integer, List<Clip>>();
+        Map<Integer, List<Clip>> result = new HashMap<Integer, List<Clip>>();
 
         for (File numberDir : dictorDir.listFiles()) {
             if (!numberDir.isDirectory()) {
@@ -110,7 +110,7 @@ public class SoundBase {
 
     public SoundBase(String dirname) {
         rootDir = new File(dirname);
-        clips = new HashMap<String, Map<Integer, List<Clip>>>();
+        clips = new TreeMap<String, Map<Integer, List<Clip>>>();
         //sumSpectrum = null;
 
         // TODO probably make lazy initialization

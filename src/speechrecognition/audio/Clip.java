@@ -19,20 +19,18 @@
 package speechrecognition.audio;
 
 //import java.awt.Rectangle;
-import speechrecognition.audio.spectrum.window.WindowFunction;
-import speechrecognition.audio.spectrum.window.HammingWindowFunction;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import speechrecognition.audio.spectrum.window.HammingWindowFunction;
+import speechrecognition.audio.spectrum.window.WindowFunction;
 //import javax.swing.event.UndoableEditListener;
 //import javax.swing.undo.UndoableEditSupport;
 
@@ -122,6 +120,7 @@ public class Clip {
         this.overlap = overlap;
     }
     
+   
     public void readFrames() throws IOException {
         if (frames.size() > 0)
                 return;
@@ -137,7 +136,15 @@ public class Clip {
             throw new IOException(e);
         }
         
+        readFrames(in);
+    }
+    
+    public void readFrames(InputStream in) throws IOException {
+        if (frames.size() > 0)
+            return;
+        
         WindowFunction windowFunc = new HammingWindowFunction(frameSize);
+        
         byte[] buf = new byte[frameSize * 2]; // 16-bit mono samples
         int n;
         in.mark(buf.length * 2);
