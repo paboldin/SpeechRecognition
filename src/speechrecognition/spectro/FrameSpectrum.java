@@ -16,6 +16,8 @@
  */
 package speechrecognition.spectro;
 
+import speechrecognition.spectro.window.WindowFunction;
+import speechrecognition.spectro.window.NullWindowFunction;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -34,8 +36,8 @@ public class FrameSpectrum {
     /**
      * Array of spectral data.
      */
-    protected double[] data;
-    protected double power;
+    public double[] data; // TODO write acessors
+    public double power; 
     /**
      * Maps frame size to the DCT instance that handles that size.
      */
@@ -76,12 +78,12 @@ public class FrameSpectrum {
         data = new double[frameSize];
         for (int i = 0; i < data.length; i++) {
             data[i] = timeData[i];
-            power += data[i] * data[i];
+            power += Math.pow(data[i], 2);
             min = Math.min(data[i], min);
             max = Math.max(data[i], max);
         }
 
-        power = Math.sqrt(power) / n;
+        power = Math.sqrt(power);
 
         if (logger.isLoggable(Level.FINER)) {
             logger.finer(String.format("Computed frame. min=%4.6f max=%4.6f", min, max));

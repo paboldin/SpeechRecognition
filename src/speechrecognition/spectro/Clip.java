@@ -19,6 +19,8 @@
 package speechrecognition.spectro;
 
 //import java.awt.Rectangle;
+import speechrecognition.spectro.window.WindowFunction;
+import speechrecognition.spectro.window.HammingWindowFunction;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -49,10 +51,10 @@ public class Clip {
      * The audio format this class works with. Input audio will be converted to this
      * format automatically, and output data will always be created in this format.
      */
-    private static final AudioFormat AUDIO_FORMAT = new AudioFormat(16000, 16, 1, true, true);
+    private static final AudioFormat AUDIO_FORMAT = new AudioFormat(32000, 16, 1, true, true);
 
-    private static final int DEFAULT_FRAME_SIZE = 2048;
-    private static final int DEFAULT_OVERLAP = 8;
+    private static final int DEFAULT_FRAME_SIZE = 1024;
+    private static final int DEFAULT_OVERLAP = 2;
     
     private final List<FrameSpectrum> frames = new ArrayList<FrameSpectrum>();
     

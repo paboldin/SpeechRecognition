@@ -2,21 +2,23 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package speechrecognition.spectro;
+package speechrecognition.spectro.features;
 
 import java.util.Arrays;
 import java.util.logging.Logger;
 //import java.util.Map;
 //import java.util.HashMap;
 //import speechrecognition.util.ArrayUtil;
-//import java.io.*;
+import java.io.IOException;
+import speechrecognition.spectro.Clip;
+import speechrecognition.spectro.FrameSpectrum;
 
 /**
  *
  * @author davinchi
  */
-public class ClipSpectrum {
-    private static final Logger logger = Logger.getLogger(Frame.class.getName());
+public class ClipSpectrumFeature implements ClipFeatures {
+    private static final Logger logger = Logger.getLogger(FrameSpectrum.class.getName());
 
     
     
@@ -24,17 +26,29 @@ public class ClipSpectrum {
 
     private double[] data;
     private double[] freqs;
+    private int[] idx = null;
     private String clipName;
     //private double min = Double.NEGATIVE_INFINITY, max = Double.POSITIVE_INFINITY;
 
-    private ClipSpectrum(int size) {
+    private ClipSpectrumFeature(int size) {
         this.data = new double[size];
         this.freqs = new double[size];
 
         Arrays.fill(data, 0.0);
     }
+    
+    public ClipSpectrumFeature(ClipSpectrumFeature other, int[] idx) {
+        this.data = new double[other.data.length];
+        this.freqs = new double[other.freqs.length];
+        this.clipName = other.clipName;
+        this.idx = idx;
+        
+        System.arraycopy(other.freqs, 0, this.freqs, 0, this.freqs.length);
+        System.arraycopy(other.data, 0, this.data, 0, this.data.length);
+    }
 
-    public ClipSpectrum(ClipSpectrum other) {
+    
+    public ClipSpectrumFeature(ClipSpectrumFeature other) {
         this.data = new double[other.data.length];
         this.freqs = new double[other.freqs.length];
         this.clipName = other.clipName;
@@ -43,7 +57,7 @@ public class ClipSpectrum {
         System.arraycopy(other.data, 0, this.data, 0, this.data.length);
     }
 
-    public ClipSpectrum(Clip clip) {
+    public ClipSpectrumFeature(Clip clip) {
         this.data = new double[clip.getFrameFreqSamples()];
         this.freqs = new double[clip.getFrameFreqSamples()];
         this.clipName = clip.getName();
@@ -57,39 +71,47 @@ public class ClipSpectrum {
         }
         
         copyFrames(clip);
-
-
-        /*
-         File out = new File("/home/davinchi/testme.txt");
-         try {
-         out.createNewFile();
-         FileWriter fw = new FileWriter(out.getAbsoluteFile());
-         BufferedWriter bw = new BufferedWriter(fw);
-         PrintWriter pw = new PrintWriter(bw);
-         pw.println(Arrays.toString(data));
-         pw.println(Arrays.toString(freqs));
-         } catch (IOException e) {
-         }*/
+    }
+    
+    @Override
+    public double[] getFeatureVector() {
+        double[] features = new double[this.idx.length];
+        
+        for (int i = 0; i < this.idx.length; ++i)
+            features[i] = this.data[idx[i]];
+        
+        return features;
     }
     
     private void copyFrames(Clip clip) {
         double maxPower = Double.NEGATIVE_INFINITY;
       
-        for (Frame frame: clip.frames) {
-            maxPower = Math.max(frame.power, maxPower);
-        }
+        try {
         
-        for (Frame frame: clip.frames) {
-            assert (frame.data.length == data.length);
-            
-            if (frame.power < maxPower * MAX_POWER_FRAC) {
-                //logger.info("Discarding frame: " + frame.power + " max: " + maxPower);
-                continue;
+            for (int i = 0; i < clip.getFrameCount(); ++i) {
+                FrameSpectrum frame = clip.getFrame(i);
+                maxPower = Math.max(frame.power, maxPower);
             }
 
-            for (int i = 0; i < frame.data.length; ++i) {
-                this.data[i] += Math.pow(frame.data[i], 2);
+            for (int i = 0; i < clip.getFrameCount(); ++i) {
+                FrameSpectrum frame = clip.getFrame(i);
+
+                assert (frame.data.length == data.length);
+
+                if (frame.power < maxPower * MAX_POWER_FRAC) {
+                    //logger.info("Discarding frame: " + frame.power + " max: " + maxPower);
+                    continue;
+                }
+
+
+                for (int j = 0; j < frame.getLength(); ++j) {
+                    this.data[j] += Math.pow(frame.getReal(j), 2);
+                }
             }
+
+        } catch (IOException e) {
+        } finally {
+            clip.unloadFrames();
         }
 
         for(int i = 0; i < data.length; ++i)
@@ -109,7 +131,10 @@ public class ClipSpectrum {
         }
     }
 
-    public void addSelf(ClipSpectrum other) {
+    //@Override
+    public void addSelf(ClipSpectrumFeature other) {
+        //double freqs[] = other.getFreqs();
+        //double data[] = other.getData();
         assert(Arrays.equals(this.freqs, other.freqs));
         // This is not full.
         assert (this.data.length == other.data.length);
