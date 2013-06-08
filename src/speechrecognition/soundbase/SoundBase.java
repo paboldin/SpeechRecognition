@@ -18,9 +18,9 @@ import java.util.ArrayList;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.SwingWorker;
 
-import speechrecognition.spectro.Clip;
+import speechrecognition.audio.Clip;
 //import speechrecognition.spectro.ClipFeature;
-import speechrecognition.spectro.features.FeaturesExtractor;
+import speechrecognition.audio.features.FeaturesExtractor;
 //import speechrecognition.util.ArrayUtil;
 //import speechrecognition.soundbase.SoundBaseVisitor;
 

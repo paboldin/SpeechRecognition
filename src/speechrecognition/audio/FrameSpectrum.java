@@ -14,10 +14,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
-package speechrecognition.spectro;
+package speechrecognition.audio;
 
-import speechrecognition.spectro.window.WindowFunction;
-import speechrecognition.spectro.window.NullWindowFunction;
+import speechrecognition.audio.spectrum.window.WindowFunction;
+import speechrecognition.audio.spectrum.window.NullWindowFunction;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;

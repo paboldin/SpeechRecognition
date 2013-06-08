@@ -16,11 +16,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
-package speechrecognition.spectro;
+package speechrecognition.audio;
 
 //import java.awt.Rectangle;
-import speechrecognition.spectro.window.WindowFunction;
-import speechrecognition.spectro.window.HammingWindowFunction;
+import speechrecognition.audio.spectrum.window.WindowFunction;
+import speechrecognition.audio.spectrum.window.HammingWindowFunction;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;

@@ -4,7 +4,7 @@
  */
 package speechrecognition.soundbase;
 
-import speechrecognition.spectro.Clip;
+import speechrecognition.audio.Clip;
 
 /**
  *

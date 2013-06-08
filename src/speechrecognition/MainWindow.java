@@ -4,8 +4,10 @@
  */
 package speechrecognition;
 
-import speechrecognition.spectro.features.SpectrumFeatureExtractor;
-import speechrecognition.spectro.features.FeaturesExtractor;
+import speechrecognition.audio.features.PerFrameBandsFeatureExtractor;
+import speechrecognition.audio.features.PerFrameStrongFreqsFeatureExtractor;
+import speechrecognition.audio.features.SpectrumFeatureExtractor;
+import speechrecognition.audio.features.FeaturesExtractor;
 //import speechrecognition.spectro.features.PerFrameFeatureExtractor;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeEvent;
@@ -20,7 +22,6 @@ import java.io.IOException;
 import speechrecognition.soundbase.SoundBase;
 
 //import speechrecognition.spectro.*;
-import speechrecognition.spectro.features.*;
 
 /**
  *

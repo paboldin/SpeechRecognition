@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>. 
  */
-package speechrecognition.spectro.window;
+package speechrecognition.audio.spectrum.window;
 
 import java.util.Arrays;
 import java.util.logging.Logger;

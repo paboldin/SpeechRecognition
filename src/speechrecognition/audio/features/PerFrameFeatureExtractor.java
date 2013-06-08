@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package speechrecognition.spectro.features;
+package speechrecognition.audio.features;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
-import speechrecognition.spectro.Clip;
-import speechrecognition.spectro.FrameSpectrum;
+import speechrecognition.audio.Clip;
+import speechrecognition.audio.FrameSpectrum;
 //import java.util.List;
 import speechrecognition.util.ArrayUtil;
 
