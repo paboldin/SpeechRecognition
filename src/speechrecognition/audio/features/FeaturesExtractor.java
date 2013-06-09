@@ -4,7 +4,7 @@
  */
 package speechrecognition.audio.features;
 
-import java.io.InputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.OutputStream;
 
@@ -25,7 +25,7 @@ public abstract class FeaturesExtractor {
     
     public abstract void serializeParameters(OutputStream os) throws IOException;
     
-    public static FeaturesExtractor fromStream(InputStream is) throws IOException {
+    public static FeaturesExtractor fromStream(BufferedReader br) throws IOException {
         throw new IllegalStateException("Not implemented in subclass");
     }
 }

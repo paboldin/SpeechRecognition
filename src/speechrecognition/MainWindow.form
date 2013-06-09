@@ -486,35 +486,13 @@
                 </Component>
                 <Component class="javax.swing.JTextField" name="jFrequenciesRanges">
                   <Properties>
-                    <Property name="text" type="java.lang.String" value="100,200,300,400,600,800,1200,1600"/>
+                    <Property name="text" type="java.lang.String" value="100,200,300,400,600,800,1200,1600,2400"/>
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jFrequenciesRangesActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
-            </Container>
-            <Container class="javax.swing.JPanel" name="jPanel2">
-              <Constraints>
-                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout" value="org.netbeans.modules.form.compat2.layouts.support.JTabbedPaneSupportLayout$JTabbedPaneConstraintsDescription">
-                  <JTabbedPaneConstraints tabName="Per-frame MFCC">
-                    <Property name="tabTitle" type="java.lang.String" value="Per-frame MFCC"/>
-                  </JTabbedPaneConstraints>
-                </Constraint>
-              </Constraints>
-
-              <Layout>
-                <DimensionLayout dim="0">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="581" max="32767" attributes="0"/>
-                  </Group>
-                </DimensionLayout>
-                <DimensionLayout dim="1">
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <EmptySpace min="0" pref="185" max="32767" attributes="0"/>
-                  </Group>
-                </DimensionLayout>
-              </Layout>
             </Container>
           </SubComponents>
         </Container>

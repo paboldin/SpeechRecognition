@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import speechrecognition.audio.spectrum.window.HammingWindowFunction;
 import speechrecognition.audio.spectrum.window.WindowFunction;
@@ -53,6 +54,8 @@ public class Clip {
 
     private static final int DEFAULT_FRAME_SIZE = 1024;
     private static final int DEFAULT_OVERLAP = 2;
+    
+    private AudioInputStream audioInputStream = null;
     
     private final List<FrameSpectrum> frames = new ArrayList<FrameSpectrum>();
     
@@ -100,6 +103,10 @@ public class Clip {
         return new Clip(file.getAbsolutePath(), DEFAULT_FRAME_SIZE, DEFAULT_OVERLAP);
     }
     
+    public static Clip newInstance(AudioInputStream is) throws UnsupportedAudioFileException, IOException {
+        return new Clip(is, DEFAULT_FRAME_SIZE, DEFAULT_OVERLAP);
+    }
+    
     /**
      * Creates a new clip from the audio data in the given input stream.
      * 
@@ -114,11 +121,40 @@ public class Clip {
      * </ul>
      * @throws IOException If reading the input stream fails for any reason. 
      */
-    private Clip(String name, int frameSize, int overlap) throws IOException {
+    private Clip(String name, int frameSize, int overlap) {
         this.name = name;
         this.frameSize = frameSize;
         this.overlap = overlap;
     }
+    
+    private Clip(AudioInputStream ais, int frameSize, int overlap) throws IOException {
+        this.frameSize = frameSize;
+        this.overlap = overlap;
+        this.name = "RECORDED";
+        this.audioInputStream = ais;
+        
+        this.readFramesInputStream(ais);
+    }
+    
+    public AudioInputStream getAudioInputStream() {
+        return audioInputStream;
+    }
+    
+    private void readFramesInputStream(AudioInputStream is) throws IOException {
+        BufferedInputStream in;
+
+        AudioFormat desiredFormat = AUDIO_FORMAT;
+        try {
+            in = new BufferedInputStream(
+                    AudioFileUtils.convertToMono(desiredFormat, is, is.getFormat())
+            );
+        } catch (UnsupportedAudioFileException e) {
+            throw new IOException(e);
+        }
+
+        readFrames(in);
+    }
+
     
    
     public void readFrames() throws IOException {

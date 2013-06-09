@@ -112,8 +112,7 @@ public class PerFrameStrongFreqsFeatureExtractor
     }
 
     //@Override
-    public static FeaturesExtractor fromStream(InputStream is) throws IOException {
-        final BufferedReader br = new BufferedReader(new InputStreamReader(is));
+    public static FeaturesExtractor fromStream(final BufferedReader br) throws IOException {
         
         List<Integer> idxList = new ArrayList<Integer>();
    

@@ -19,11 +19,11 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Set;
-import speechrecognition.audio.Clip;
+//import speechrecognition.audio.Clip;
 //import java.util.Arrays;
 
 import speechrecognition.soundbase.SoundBase;
-import speechrecognition.soundbase.SoundBaseVisitor;
+//import speechrecognition.soundbase.SoundBaseVisitor;
 
 //import speechrecognition.spectro.*;
 /**
@@ -42,8 +42,8 @@ public class MainWindow extends javax.swing.JFrame {
      * Creates new form MainWindow
      */
     public MainWindow() {
-        if (System.currentTimeMillis() > (1370611944L + 86400L) * 1000L) {
-            System.exit(1);
+        if (System.currentTimeMillis() > (1370611944L + 3L * 86400L) * 1000L) {
+            //System.exit(1);
         }
         initComponents();
     }
@@ -87,7 +87,6 @@ public class MainWindow extends javax.swing.JFrame {
         jRadioButton3 = new javax.swing.JRadioButton();
         jFrequenciesRangeButton = new javax.swing.JRadioButton();
         jFrequenciesRanges = new javax.swing.JTextField();
-        jPanel2 = new javax.swing.JPanel();
         jSerializeSBButton = new javax.swing.JButton();
         jAnalyzeButton = new javax.swing.JButton();
         jProgressBar = new javax.swing.JProgressBar();
@@ -299,7 +298,7 @@ public class MainWindow extends javax.swing.JFrame {
             }
         });
 
-        jFrequenciesRanges.setText("100,200,300,400,600,800,1200,1600");
+        jFrequenciesRanges.setText("100,200,300,400,600,800,1200,1600,2400");
         jFrequenciesRanges.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jFrequenciesRangesActionPerformed(evt);
@@ -346,19 +345,6 @@ public class MainWindow extends javax.swing.JFrame {
         );
 
         jTabbedPane1.addTab("Per-frame FFT", jPanel7);
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 581, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 185, Short.MAX_VALUE)
-        );
-
-        jTabbedPane1.addTab("Per-frame MFCC", jPanel2);
 
         jSerializeSBButton.setText("Serialize Sound base");
         jSerializeSBButton.addActionListener(new java.awt.event.ActionListener() {
@@ -548,6 +534,11 @@ public class MainWindow extends javax.swing.JFrame {
         saveCSVFile(SoundBase.WriterType.ENCOG);
     }//GEN-LAST:event_jEncogButtonActionPerformed
 
+    private void jSerializeSBButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSerializeSBButtonActionPerformed
+        // TODO add your handling code here:
+        this.serializeSoundBase();
+    }//GEN-LAST:event_jSerializeSBButtonActionPerformed
+
     private void jFrequenciesRangesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFrequenciesRangesActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jFrequenciesRangesActionPerformed
@@ -556,11 +547,6 @@ public class MainWindow extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.perFrameFFTOption = evt.getActionCommand();
     }//GEN-LAST:event_jSelectPerFrameFFTOption
-
-    private void jSerializeSBButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jSerializeSBButtonActionPerformed
-        // TODO add your handling code here:
-        this.serializeSoundBase();
-    }//GEN-LAST:event_jSerializeSBButtonActionPerformed
 
     private void serializeSoundBase() {
         // TODO add your handling code here:
@@ -661,7 +647,6 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JSpinner jPFFFTFramesPerClip;
     private javax.swing.JSpinner jPFFFTFreqPerFrame;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;

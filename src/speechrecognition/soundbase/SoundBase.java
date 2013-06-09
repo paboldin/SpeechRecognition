@@ -177,25 +177,25 @@ public class SoundBase {
             out.createNewFile();
             final FileWriter fw = new FileWriter(out.getAbsoluteFile());
             final BufferedWriter bw = new BufferedWriter(fw);
-            NeurophCSVWriter writer = null;
+            NeuralCSVWriter writer = null;
 
             switch (v) {
                 case PERDICTOR_PERNUMBER:
-                    writer = new NeurophCSVWriterPerDictorPerNumber(fe, bw,
+                    writer = new NeuralCSVWriterPerDictorPerNumber(fe, bw,
                             clips.size(), 10);
                     break;
 
                 case PERDICTOR:
-                    writer = new NeurophCSVWriterPerDictor(fe, bw,
+                    writer = new NeuralCSVWriterPerDictor(fe, bw,
                             clips.size(), 10);
                     break;
 
                 case PERNUMBER:
-                    writer = new NeurophCSVWriterPerNumber(fe, bw,
+                    writer = new NeuralCSVWriterPerNumber(fe, bw,
                             clips.size(), 10);
                     break;
                 case ENCOG:
-                    writer = new NeurophCSVWriterEncog(fe, bw, clips.size(), 10);
+                    writer = new NeuralCSVWriterEncog(fe, bw, clips.size(), 10);
                     break;
             }
 
@@ -209,7 +209,7 @@ public class SoundBase {
         }
     }
 
-    private abstract static class NeurophCSVWriter implements SoundBaseVisitor {
+    private abstract static class NeuralCSVWriter implements SoundBaseVisitor {
 
         final int DICTORS_COUNT;
         final int NUMBERS_COUNT;
@@ -219,7 +219,7 @@ public class SoundBase {
         FeaturesExtractor featureExtractor;
         BufferedWriter bw;
 
-        public NeurophCSVWriter(FeaturesExtractor featureExtractor, BufferedWriter bw, int dictors_count, int numbers_count) {
+        public NeuralCSVWriter(FeaturesExtractor featureExtractor, BufferedWriter bw, int dictors_count, int numbers_count) {
             this.featureExtractor = featureExtractor;
             this.bw = bw;
 
@@ -263,9 +263,9 @@ public class SoundBase {
         }
     };
 
-    public static class NeurophCSVWriterPerDictorPerNumber extends NeurophCSVWriter {
+    private static class NeuralCSVWriterPerDictorPerNumber extends NeuralCSVWriter {
 
-        public NeurophCSVWriterPerDictorPerNumber(FeaturesExtractor featureExtractor, BufferedWriter bw, int dictors_count, int numbers_count) {
+        public NeuralCSVWriterPerDictorPerNumber(FeaturesExtractor featureExtractor, BufferedWriter bw, int dictors_count, int numbers_count) {
             super(featureExtractor, bw, dictors_count, numbers_count);
         }
 
@@ -284,9 +284,9 @@ public class SoundBase {
         }
     };
     
-    public static class NeurophCSVWriterEncog extends NeurophCSVWriter {
+    private static class NeuralCSVWriterEncog extends NeuralCSVWriter {
 
-        public NeurophCSVWriterEncog(FeaturesExtractor featureExtractor, BufferedWriter bw, int dictors_count, int numbers_count) {
+        public NeuralCSVWriterEncog(FeaturesExtractor featureExtractor, BufferedWriter bw, int dictors_count, int numbers_count) {
             super(featureExtractor, bw, dictors_count, numbers_count);
         }
 
@@ -299,9 +299,9 @@ public class SoundBase {
         }
     };    
 
-    public static class NeurophCSVWriterPerDictor extends NeurophCSVWriter {
+    private static class NeuralCSVWriterPerDictor extends NeuralCSVWriter {
 
-        public NeurophCSVWriterPerDictor(FeaturesExtractor featureExtractor, BufferedWriter bw, int dictors_count, int numbers_count) {
+        public NeuralCSVWriterPerDictor(FeaturesExtractor featureExtractor, BufferedWriter bw, int dictors_count, int numbers_count) {
             super(featureExtractor, bw, dictors_count, numbers_count);
         }
 
@@ -318,9 +318,9 @@ public class SoundBase {
         }
     };
 
-    public static class NeurophCSVWriterPerNumber extends NeurophCSVWriter {
+    private static class NeuralCSVWriterPerNumber extends NeuralCSVWriter {
 
-        public NeurophCSVWriterPerNumber(FeaturesExtractor featureExtractor, BufferedWriter bw, int dictors_count, int numbers_count) {
+        public NeuralCSVWriterPerNumber(FeaturesExtractor featureExtractor, BufferedWriter bw, int dictors_count, int numbers_count) {
             super(featureExtractor, bw, dictors_count, numbers_count);
         }
 
