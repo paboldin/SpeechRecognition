@@ -23,6 +23,7 @@ import speechrecognition.audio.ClipCapture;
 import speechrecognition.audio.ClipPlayback;
 import speechrecognition.audio.features.FeaturesExtractor;
 import speechrecognition.audio.features.PerFrameBandsFeatureExtractor;
+import speechrecognition.audio.features.PerFrameMFCCFeatureExtractor;
 import speechrecognition.audio.features.PerFrameStrongFreqsFeatureExtractor;
 import speechrecognition.audio.features.SpectrumFeatureExtractor;
 import speechrecognition.util.ArrayUtil;
@@ -41,6 +42,7 @@ public class Recognize extends javax.swing.JFrame {
     private ClipCapture clipCapture = null;
     private ClipPlayback clipPlayback = null;
     private Clip clip = null;
+    private int outputLayer = 0;
 
     /**
      * Creates new form Recognize
@@ -218,6 +220,9 @@ public class Recognize extends javax.swing.JFrame {
             }
         }
 
+        outputLayer = neuralNetwork.getLayerTotalNeuronCount(
+                neuralNetwork.getLayerCount() - 1);
+
         jNNLabel.setText(nnlabel.toString());
     }
 
@@ -268,6 +273,10 @@ public class Recognize extends javax.swing.JFrame {
                 fe = SpectrumFeatureExtractor.fromStream(br);
             } else if (feName.equals("PerFrameStrongFreqsFeatureExtractor")) {
                 fe = PerFrameStrongFreqsFeatureExtractor.fromStream(br);
+            } else if (feName.equals("PerFrameMFCCFeatureExtractor")) {
+                fe = PerFrameMFCCFeatureExtractor.fromStream(br);
+            } else {
+                throw new IllegalStateException("Cannot find FE: " + feName);
             }
 
         } catch (IOException e) {

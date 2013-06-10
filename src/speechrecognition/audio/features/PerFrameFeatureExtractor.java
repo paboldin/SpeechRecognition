@@ -4,17 +4,10 @@
  */
 package speechrecognition.audio.features;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 import speechrecognition.audio.Clip;
-import speechrecognition.audio.FrameSpectrum;
 //import java.util.List;
-import speechrecognition.util.ArrayUtil;
 
 /**
  *

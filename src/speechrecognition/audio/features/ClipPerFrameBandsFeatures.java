@@ -65,7 +65,7 @@ public class ClipPerFrameBandsFeatures extends ClipPerFrameFeatures {
                 //features[i * bandsN + j] = Math.sqrt(bandPower);
             }
 
-
+/*
             double maxBandPower = Double.NEGATIVE_INFINITY;
             for (int j = 0; j < bandsN; ++j) {
                 maxBandPower = Math.max(features[i * bandsN + j], maxBandPower);
@@ -73,9 +73,9 @@ public class ClipPerFrameBandsFeatures extends ClipPerFrameFeatures {
             for (int j = 0; j < bandsN; ++j) {
                 features[i * bandsN + j] /= maxBandPower;
             }
- 
+*/ 
         }
-/*
+
         double maxBandPower = Double.NEGATIVE_INFINITY;
         for (int i = 0; i < features.length; ++i) {
             maxBandPower = Math.max(features[i], maxBandPower);
@@ -83,7 +83,7 @@ public class ClipPerFrameBandsFeatures extends ClipPerFrameFeatures {
         for (int i = 0; i < features.length; ++i) {
             features[i] /= maxBandPower;
         }
-*/
+
         return features;
 
         /*        double[] features = new double[this.idx.length];

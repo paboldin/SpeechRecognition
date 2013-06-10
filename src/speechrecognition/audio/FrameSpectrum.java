@@ -33,11 +33,13 @@ import edu.emory.mathcs.jtransforms.dct.DoubleDCT_1D;
 public class FrameSpectrum {
 
     private static final Logger logger = Logger.getLogger(FrameSpectrum.class.getName());
+    private static final Preemphasize preemphasize = new Preemphasize(0.97);
     /**
      * Array of spectral data.
      */
     public double[] data; // TODO write acessors
-    public double power; 
+    public double power;
+    public double[] timeData;
     /**
      * Maps frame size to the DCT instance that handles that size.
      */
@@ -45,16 +47,17 @@ public class FrameSpectrum {
     private final WindowFunction windowFunc;
 
     public FrameSpectrum(FrameSpectrum other) {
-        this.data = new double[other.data.length];
+        this.timeData = other.timeData;
+        this.data = other.data;
         this.power = other.power;
         this.windowFunc = other.windowFunc;
 
-        System.arraycopy(other.data, 0, this.data, 0, this.data.length);
+        //System.arraycopy(other.data, 0, this.data, 0, this.data.length);
     }
-    
+
     public void addSelf(FrameSpectrum other) {
-        assert(this.data.length == other.data.length);
-        for(int i = 0; i < this.data.length; ++i) {
+        assert (this.data.length == other.data.length);
+        for (int i = 0; i < this.data.length; ++i) {
             this.data[i] = Math.sqrt(Math.pow(this.data[i], 2) + Math.pow(other.data[i], 2));
         }
         this.power = Math.sqrt(Math.pow(this.power, 2) + Math.pow(other.power, 2));
@@ -64,20 +67,26 @@ public class FrameSpectrum {
         this.windowFunc = windowFunc;
         int frameSize = timeData.length;
         DoubleDCT_1D dct = getDctInstance(frameSize);
+        
+        this.timeData = timeData;
+        
+        this.data = new double[frameSize];
+        System.arraycopy(timeData, 0, data, 0, frameSize);
+
+        // in place preemphasize filter
+        preemphasize.applyFilter(data);
 
         // in place window
-        windowFunc.applyWindow(timeData);
+        windowFunc.applyWindow(data);
 
         // in place transform: timeData becomes frequency data
-        dct.forward(timeData, true);
+        dct.forward(data, true);
 
         double min = Double.POSITIVE_INFINITY;
         double max = Double.NEGATIVE_INFINITY;
 
         power = 0.0;
-        data = new double[frameSize];
         for (int i = 0; i < data.length; i++) {
-            data[i] = timeData[i];
             power += Math.pow(data[i], 2);
             min = Math.min(data[i], min);
             max = Math.max(data[i], max);

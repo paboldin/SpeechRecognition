@@ -19,6 +19,7 @@ import javax.swing.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Set;
+import speechrecognition.audio.features.PerFrameMFCCFeatureExtractor;
 //import speechrecognition.audio.Clip;
 //import java.util.Arrays;
 
@@ -87,11 +88,19 @@ public class MainWindow extends javax.swing.JFrame {
         jRadioButton3 = new javax.swing.JRadioButton();
         jFrequenciesRangeButton = new javax.swing.JRadioButton();
         jFrequenciesRanges = new javax.swing.JTextField();
+        jPanel2 = new javax.swing.JPanel();
+        jLabel8 = new javax.swing.JLabel();
+        jPFMFCCFramesPerClip = new javax.swing.JSpinner();
+        jLabel9 = new javax.swing.JLabel();
+        jPFMFCCoefficents = new javax.swing.JSpinner();
+        jLabel10 = new javax.swing.JLabel();
+        jPFMFCCMelBands = new javax.swing.JSpinner();
         jSerializeSBButton = new javax.swing.JButton();
         jAnalyzeButton = new javax.swing.JButton();
         jProgressBar = new javax.swing.JProgressBar();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("SpeechRecognizer DB analyzer");
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Database"));
 
@@ -121,8 +130,7 @@ public class MainWindow extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 387, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jSelectDirectory)
-                .addGap(132, 132, 132))
+                .addComponent(jSelectDirectory, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
@@ -257,7 +265,7 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jFFTFrequencies, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(257, Short.MAX_VALUE))
+                .addContainerGap(216, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -324,7 +332,7 @@ public class MainWindow extends javax.swing.JFrame {
                         .addComponent(jFrequenciesRangeButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jFrequenciesRanges, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -346,6 +354,56 @@ public class MainWindow extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("Per-frame FFT", jPanel7);
 
+        jLabel8.setText("Frames per clip:");
+
+        jPFMFCCFramesPerClip.setValue(10);
+
+        jLabel9.setText("MFC coefficients:");
+
+        jPFMFCCoefficents.setValue(13);
+
+        jLabel10.setText("Mel bands:");
+
+        jPFMFCCMelBands.setValue(40);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel9)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel10))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(jPFMFCCoefficents, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPFMFCCMelBands, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jPFMFCCFramesPerClip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(356, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel8)
+                    .addComponent(jPFMFCCFramesPerClip, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel9)
+                    .addComponent(jPFMFCCoefficents, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(jPFMFCCMelBands, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(77, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab("Per-frame MFCC", jPanel2);
+
         jSerializeSBButton.setText("Serialize Sound base");
         jSerializeSBButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -366,11 +424,11 @@ public class MainWindow extends javax.swing.JFrame {
         jPanel8.setLayout(jPanel8Layout);
         jPanel8Layout.setHorizontalGroup(
             jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1)
+            .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(jPanel8Layout.createSequentialGroup()
                 .addComponent(jAnalyzeButton, javax.swing.GroupLayout.PREFERRED_SIZE, 290, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jSerializeSBButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jSerializeSBButton, javax.swing.GroupLayout.DEFAULT_SIZE, 248, Short.MAX_VALUE))
             .addComponent(jProgressBar, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel8Layout.setVerticalGroup(
@@ -392,7 +450,7 @@ public class MainWindow extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -482,13 +540,22 @@ public class MainWindow extends javax.swing.JFrame {
                 //System.out.println(perFrameFFTOption);
                 if ("maxfreq".equals(perFrameFFTOption)) {
                     fe = new PerFrameStrongFreqsFeatureExtractor(
-                            (Integer) this.jPFFFTFreqPerFrame.getValue(),
-                            (Integer) this.jPFFFTFramesPerClip.getValue());
+                            (Integer) this.jPFFFTFramesPerClip.getValue(),
+                            (Integer) this.jPFFFTFreqPerFrame.getValue()
+                    );
                 } else if ("freqrange".equals(perFrameFFTOption)) {
                     fe = new PerFrameBandsFeatureExtractor(
-                            (String) this.jFrequenciesRanges.getText(),
-                            (Integer) this.jPFFFTFramesPerClip.getValue());
+                            (Integer) this.jPFFFTFramesPerClip.getValue(),
+                            (String) this.jFrequenciesRanges.getText()
+                    );
                 }
+                break;
+            case 2:
+                fe = new PerFrameMFCCFeatureExtractor(
+                        (Integer) this.jPFMFCCFramesPerClip.getValue(),
+                        (Integer) this.jPFMFCCoefficents.getValue(),
+                        (Integer) this.jPFMFCCMelBands.getValue()
+                );
                 break;
             default:
                 fe = null;
@@ -638,15 +705,22 @@ public class MainWindow extends javax.swing.JFrame {
     private javax.swing.JRadioButton jFrequenciesRangeButton;
     private javax.swing.JTextField jFrequenciesRanges;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JSpinner jPFFFTFramesPerClip;
     private javax.swing.JSpinner jPFFFTFreqPerFrame;
+    private javax.swing.JSpinner jPFMFCCFramesPerClip;
+    private javax.swing.JSpinner jPFMFCCMelBands;
+    private javax.swing.JSpinner jPFMFCCoefficents;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;

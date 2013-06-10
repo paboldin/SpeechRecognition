@@ -50,10 +50,10 @@ public class Clip {
      * The audio format this class works with. Input audio will be converted to this
      * format automatically, and output data will always be created in this format.
      */
-    private static final AudioFormat AUDIO_FORMAT = new AudioFormat(32000, 16, 1, true, true);
+    private static final AudioFormat AUDIO_FORMAT = new AudioFormat(16000, 16, 1, true, true);
 
     private static final int DEFAULT_FRAME_SIZE = 1024;
-    private static final int DEFAULT_OVERLAP = 2;
+    private static final int DEFAULT_OVERLAP = 4;
     
     private AudioInputStream audioInputStream = null;
     

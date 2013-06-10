@@ -8,8 +8,6 @@ import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 
 import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.IOException;
 import java.io.OutputStream;
 //import java.util.Arrays;
@@ -25,44 +23,34 @@ import speechrecognition.audio.Clip;
  *
  * TODO make this generic (on Feature) class?
  */
-public class PerFrameBandsFeatureExtractor
-        extends PerFrameFeatureExtractor<ClipPerFrameBandsFeatures> {
+public class PerFrameMFCCFeatureExtractor
+        extends PerFrameFeatureExtractor<ClipPerFrameMFCCFeatures> {
 
-    private double[] featureRanges;
-    private boolean extracted = false;
+    private int mfccCount = 12, mfccMelCount = 20;
 
-    public PerFrameBandsFeatureExtractor(int framesCount) {
+    public PerFrameMFCCFeatureExtractor(int framesCount) {
         super(framesCount);
-        this.featureRanges = null;
     }
 
-    public PerFrameBandsFeatureExtractor(int framesCount, String ranges) {
+    public PerFrameMFCCFeatureExtractor(int framesCount, int mfccCount, int mfccMelCount) {
         super(framesCount);
-        
-        String[] parts = ranges.split(",");
-        assert(parts.length >= 2);
-        
-        this.featureRanges = new double[parts.length];
-        for(int i = 0; i < parts.length; ++i) {
-            featureRanges[i] = Double.parseDouble(parts[i]);
-        }
-        for(int i = 0; i < parts.length - 1; ++i) {
-            assert(featureRanges[i] < featureRanges[i - 1]);
-        }
+
+        this.mfccCount = mfccCount;
+        this.mfccMelCount = mfccMelCount;
     }
 
     @Override
     public void featureFromClip(Clip clip) {
-        ClipPerFrameBandsFeatures csf = new ClipPerFrameBandsFeatures(
+        ClipPerFrameMFCCFeatures csf = new ClipPerFrameMFCCFeatures(
                 clip, framesCount);
         clipToFeature.put(clip, csf);
     }
 
     @Override
     public double[] extractFeatureVector(Clip clip) {
-        ClipPerFrameBandsFeatures csf = new ClipPerFrameBandsFeatures(
+        ClipPerFrameMFCCFeatures csf = new ClipPerFrameMFCCFeatures(
                 clipToFeature.get(clip),
-                this.featureRanges);
+                this.mfccCount, this.mfccMelCount);
 
         return csf.getFeatureVector();
     }
@@ -87,11 +75,9 @@ public class PerFrameBandsFeatureExtractor
         bw.write(String.valueOf(this.framesCount));
         bw.write("\n");
 
-        for(int i = 0; i < featureRanges.length; ++i) {
-            bw.write(String.valueOf(featureRanges[i]));
-            if (i != featureRanges.length - 1)
-                bw.write(",");
-        }
+        bw.write(String.valueOf(this.mfccCount));
+        bw.write("\n");
+        bw.write(String.valueOf(this.mfccMelCount));
         bw.write("\n");
         
         bw.flush();
@@ -100,7 +86,8 @@ public class PerFrameBandsFeatureExtractor
     //@Override
     public static FeaturesExtractor fromStream(final BufferedReader br) throws IOException {
         int framesCount = Integer.parseInt(br.readLine());
-        String features = br.readLine();
-        return new PerFrameBandsFeatureExtractor(framesCount, features);
+        int mfccCount = Integer.parseInt(br.readLine());
+        int mfccMelCount = Integer.parseInt(br.readLine());
+        return new PerFrameMFCCFeatureExtractor(framesCount, mfccCount, mfccMelCount);
     }
 }

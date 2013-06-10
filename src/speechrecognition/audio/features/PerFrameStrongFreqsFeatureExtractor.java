@@ -31,14 +31,14 @@ public class PerFrameStrongFreqsFeatureExtractor
     private int freqsCount;
     private int[] featureVectorIdx = null;
     
-    public PerFrameStrongFreqsFeatureExtractor(int[] freqs, int framesCount) {
+    public PerFrameStrongFreqsFeatureExtractor(int framesCount, int[] freqs) {
         super(framesCount);
         
         this.freqsCount = freqs.length;
         this.featureVectorIdx = freqs;
     }
 
-    public PerFrameStrongFreqsFeatureExtractor(int freqsCount, int framesCount) {
+    public PerFrameStrongFreqsFeatureExtractor(int framesCount, int freqsCount) {
         super(framesCount);
 
         this.freqsCount = freqsCount;
@@ -130,6 +130,6 @@ public class PerFrameStrongFreqsFeatureExtractor
             idx[i] = idxList.get(i);
         }
         
-        return new PerFrameStrongFreqsFeatureExtractor(idx, framesCount);
+        return new PerFrameStrongFreqsFeatureExtractor(framesCount, idx);
     }
 }

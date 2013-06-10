@@ -22,6 +22,7 @@ public abstract class ClipPerFrameFeatures implements ClipFeatures {
     protected FrameSpectrum[] framesSpectrum;
     protected double[] freqs;
     protected final double MAX_POWER_FRAC = 0.1;
+    protected double sampleRate;
    
     
     protected ClipPerFrameFeatures(int framesN) {
@@ -32,6 +33,7 @@ public abstract class ClipPerFrameFeatures implements ClipFeatures {
     protected ClipPerFrameFeatures(Clip clip, int framesN) {
         this(framesN);
         
+        this.sampleRate = clip.getSamplingRate();
         this.clipName = clip.getName();
 
         initFreqs(clip.getFrameFreqSamples(), clip.getSamplingRate());
@@ -44,6 +46,7 @@ public abstract class ClipPerFrameFeatures implements ClipFeatures {
 
         this.clipName = other.clipName;
         this.freqs = other.freqs;
+        this.sampleRate = other.sampleRate;
 
         for (int i = 0; i < framesN; ++i) {
             this.framesSpectrum[i] = new FrameSpectrum(other.framesSpectrum[i]);
@@ -104,6 +107,7 @@ public abstract class ClipPerFrameFeatures implements ClipFeatures {
             //            System.out.println(startI + " " + stopI);
             final int framesSelected = stopI - startI;
             final double step = (double) (framesSelected - 1) / (double) (framesN - 1);
+            System.out.println("step = " + step);
             for (int i = 0; i < framesN; ++i) {
                 framesSpectrum[i] = clip.getFrame(startI + (int) Math.round(step * i));
             }
