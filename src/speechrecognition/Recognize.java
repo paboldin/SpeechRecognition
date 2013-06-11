@@ -38,11 +38,11 @@ public class Recognize extends javax.swing.JFrame {
     private JFileChooser fc = new JFileChooser();
     private FeaturesExtractor fe = null;
     private List<String> dictorsList = null;
-    private BasicNetwork neuralNetwork = null;
+    private BasicNetwork numberNeuralNetwork = null;
+    private BasicNetwork dictorNeuralNetwork = null;
     private ClipCapture clipCapture = null;
     private ClipPlayback clipPlayback = null;
     private Clip clip = null;
-    private int outputLayer = 0;
 
     /**
      * Creates new form Recognize
@@ -61,7 +61,19 @@ public class Recognize extends javax.swing.JFrame {
 
         file = new File("nn.eg");
         if (file.exists()) {
-            readNeuralNetwork(file);
+            numberNeuralNetwork = readNeuralNetwork(file);
+            updateNeuralLabel(numberNeuralNetwork, jNNLabel);
+        }
+
+        int outputLayerN = numberNeuralNetwork.getLayerNeuronCount(numberNeuralNetwork.getLayerCount() - 1);
+        boolean needDictorsNN = outputLayerN < dictorsList.size() * NUMBERS_COUNT;
+        jReadDictorsNeuralNetworkButton.setEnabled(needDictorsNN);
+
+        if (needDictorsNN) {
+            file = new File("nn-dictor.eg");
+            if (file.exists()) {
+                dictorNeuralNetwork = readNeuralNetwork(file);
+            }
         }
     }
 
@@ -86,6 +98,7 @@ public class Recognize extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jRecognizeResults = new javax.swing.JTextArea();
         jPlayButton = new javax.swing.JButton();
+        jReadDictorsNeuralNetworkButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -134,31 +147,47 @@ public class Recognize extends javax.swing.JFrame {
             }
         });
 
+        jReadDictorsNeuralNetworkButton.setText("Read dictors network");
+        jReadDictorsNeuralNetworkButton.setEnabled(false);
+        jReadDictorsNeuralNetworkButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jReadDictorsNeuralNetworkButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jReadSoundbaseButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jReadNetworkButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jRecordButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPlayButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel4))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jRecordButton, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE)
+                            .addComponent(jPlayButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 402, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jReadSoundbaseButton, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jNNLabel)
-                            .addComponent(jDictorsLabel)
-                            .addComponent(jFELabel))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 396, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jDictorsLabel))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jFELabel, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jReadNetworkButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jReadDictorsNeuralNetworkButton))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jNNLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -166,64 +195,81 @@ public class Recognize extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jDictorsLabel)
                     .addComponent(jReadSoundbaseButton)
-                    .addComponent(jLabel1)
-                    .addComponent(jDictorsLabel))
+                    .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel2)
-                    .addComponent(jFELabel))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jFELabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jReadNetworkButton)
-                    .addComponent(jLabel4)
-                    .addComponent(jNNLabel))
-                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jReadNetworkButton)
+                            .addComponent(jLabel4))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jReadDictorsNeuralNetworkButton))
+                    .addComponent(jNNLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jRecordButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPlayButton)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 186, Short.MAX_VALUE))
-                .addContainerGap())
+                        .addContainerGap())
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE)))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void chooseNeuralNetwork() {
+    private void chooseNumberNeuralNetwork() {
         fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
 
         int returnVal = fc.showOpenDialog(Recognize.this);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             File file = fc.getSelectedFile();
-            readNeuralNetwork(file);
+            numberNeuralNetwork = readNeuralNetwork(file);
+            updateNeuralLabel(numberNeuralNetwork, jNNLabel);
+            int outputLayerN = numberNeuralNetwork.getLayerNeuronCount(numberNeuralNetwork.getLayerCount() - 1);
+            jReadDictorsNeuralNetworkButton.setEnabled(outputLayerN < dictorsList.size() * NUMBERS_COUNT);
         }
-
     }
 
-    private void readNeuralNetwork(File file) {
-        neuralNetwork = (BasicNetwork) EncogDirectoryPersistence.loadObject(file);
+    private void chooseDictorNeuralNetwork() {
+        fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+        int returnVal = fc.showOpenDialog(Recognize.this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile();
+            dictorNeuralNetwork = readNeuralNetwork(file);
+            assert (dictorsList.size()
+                    == dictorNeuralNetwork.getLayerNeuronCount(dictorNeuralNetwork.getLayerCount() - 1));
+        }
+    }
+
+    private BasicNetwork readNeuralNetwork(File file) {
+        return (BasicNetwork) EncogDirectoryPersistence.loadObject(file);
+    }
+
+    private void updateNeuralLabel(BasicNetwork nn, javax.swing.JLabel label) {
 
         StringBuilder nnlabel = new StringBuilder();
 
         nnlabel.append("Layers: ");
-        nnlabel.append(String.valueOf(neuralNetwork.getLayerCount()));
+        nnlabel.append(String.valueOf(nn.getLayerCount()));
         nnlabel.append("; ");
 
         nnlabel.append("Total neurons: ");
-        for (int i = 0; i < neuralNetwork.getLayerCount(); ++i) {
-            nnlabel.append(String.valueOf(neuralNetwork.getLayerTotalNeuronCount(i)));
-            if (i != neuralNetwork.getLayerCount() - 1) {
+        for (int i = 0; i < nn.getLayerCount(); ++i) {
+            nnlabel.append(String.valueOf(nn.getLayerTotalNeuronCount(i)));
+            if (i != nn.getLayerCount() - 1) {
                 nnlabel.append(", ");
             }
         }
 
-        outputLayer = neuralNetwork.getLayerTotalNeuronCount(
-                neuralNetwork.getLayerCount() - 1);
-
-        jNNLabel.setText(nnlabel.toString());
+        label.setText(nnlabel.toString());
     }
 
     private void chooseSoundbase() {
@@ -331,27 +377,48 @@ public class Recognize extends javax.swing.JFrame {
         }
 
         fe.featureFromClip(clip);
+        int number = -1, dictor = -1;
         double[] fv = fe.extractFeatureVector(clip);
-        double[] output = new double[dictorsList.size() * NUMBERS_COUNT];
-        neuralNetwork.compute(fv, output);
-
-
         jRecognizeResults.append("\nFV: ");
         jRecognizeResults.append(Arrays.toString(fv) + "\n");
+
+        if (dictorNeuralNetwork != null) {
+            double[] output = new double[NUMBERS_COUNT];
+            numberNeuralNetwork.compute(fv, output);
+
+            int[] idx = ArrayUtil.argsort(output, false);
+            jRecognizeResults.append("Number idx: " + Arrays.toString(idx) + "\n");
+            number = idx[0];
+
+            output = new double[dictorsList.size()];
+            dictorNeuralNetwork.compute(fv, output);
+
+            idx = ArrayUtil.argsort(output, false);
+            jRecognizeResults.append("Dictor idx: " + Arrays.toString(idx) + "\n");
+
+            dictor = idx[0];
+        } else {
+            double[] output = new double[NUMBERS_COUNT * dictorsList.size()];
+            numberNeuralNetwork.compute(fv, output);
+
+            int[] idx = ArrayUtil.argsort(output, false);
+            number = idx[0] % 10;
+            dictor = idx[0] / 10;
+
+            jRecognizeResults.append("IDX: " + Arrays.toString(idx) + "\n");
+        }
+
+
 
         /*
          jRecognizeResults.append("Output: ");
          jRecognizeResults.append(Arrays.toString(output) + "\n");
          */
 
-        int[] idx = ArrayUtil.argsort(output, false);
-        jRecognizeResults.append(Arrays.toString(idx) + "\n");
-        int strongest = idx[0];
 
         jRecognizeResults.append(
-                "Dictor: " + String.valueOf(dictorsList.get(strongest / NUMBERS_COUNT))
-                + ", Number: " + String.valueOf(strongest % NUMBERS_COUNT)
-                + ", Value: " + String.valueOf(output[strongest])
+                "Dictor: " + String.valueOf(dictorsList.get(dictor))
+                + ", Number: " + String.valueOf(number)
                 + "\n");
     }
 
@@ -362,7 +429,7 @@ public class Recognize extends javax.swing.JFrame {
 
     private void jReadNetworkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jReadNetworkButtonActionPerformed
         // TODO add your handling code here:
-        chooseNeuralNetwork();
+        chooseNumberNeuralNetwork();
     }//GEN-LAST:event_jReadNetworkButtonActionPerformed
 
     private void jRecordButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRecordButtonActionPerformed
@@ -382,6 +449,11 @@ public class Recognize extends javax.swing.JFrame {
             stopPlayback();
         }
     }//GEN-LAST:event_jPlayButtonActionPerformed
+
+    private void jReadDictorsNeuralNetworkButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jReadDictorsNeuralNetworkButtonActionPerformed
+        // TODO add your handling code here:
+        chooseDictorNeuralNetwork();
+    }//GEN-LAST:event_jReadDictorsNeuralNetworkButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -425,6 +497,7 @@ public class Recognize extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jNNLabel;
     private javax.swing.JButton jPlayButton;
+    private javax.swing.JButton jReadDictorsNeuralNetworkButton;
     private javax.swing.JButton jReadNetworkButton;
     private javax.swing.JButton jReadSoundbaseButton;
     private javax.swing.JTextArea jRecognizeResults;
