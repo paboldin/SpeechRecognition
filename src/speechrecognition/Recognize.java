@@ -387,16 +387,18 @@ public class Recognize extends javax.swing.JFrame {
             numberNeuralNetwork.compute(fv, output);
 
             int[] idx = ArrayUtil.argsort(output, false);
-            jRecognizeResults.append("Number idx: " + Arrays.toString(idx) + "\n");
             number = idx[0];
+
+            jRecognizeResults.append("Number idx: " + Arrays.toString(idx) + ", value: " + output[number] + "\n");
 
             output = new double[dictorsList.size()];
             dictorNeuralNetwork.compute(fv, output);
 
             idx = ArrayUtil.argsort(output, false);
-            jRecognizeResults.append("Dictor idx: " + Arrays.toString(idx) + "\n");
-
             dictor = idx[0];
+
+            jRecognizeResults.append("Dictor idx: " + Arrays.toString(idx) + ", value: "  + output[dictor] + "\n");
+
         } else {
             double[] output = new double[NUMBERS_COUNT * dictorsList.size()];
             numberNeuralNetwork.compute(fv, output);
