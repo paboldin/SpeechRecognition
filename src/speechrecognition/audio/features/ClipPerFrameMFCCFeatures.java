@@ -80,27 +80,5 @@ public class ClipPerFrameMFCCFeatures extends ClipPerFrameFeatures {
         }
 
         return features;
-
-        /*        double[] features = new double[this.idx.length];
-         assert (this.idx.length % framesN == 0);
-
-         int freqPerFrame = this.idx.length / framesN;
-
-         for (int i = 0, k = 0; i < framesN; ++i) {
-         double maxSignal = Double.NEGATIVE_INFINITY;
-         for (int j = 0; j < freqPerFrame; ++j) {
-         maxSignal = Math.max(
-         Math.abs(fs.getReal(idx[i * freqPerFrame + j])),
-         maxSignal
-         );
-         }
-         for (int j = 0; j < freqPerFrame; ++j) {
-         features[k] = Math.abs(fs.getReal(idx[k])) / maxSignal;
-         k++;
-         }
-         }
-
-         return features;
-         */
     }
 }
